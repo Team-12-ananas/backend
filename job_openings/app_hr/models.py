@@ -1,43 +1,93 @@
 from django.db import models
 
-choices_company = [
-    ('company1', 'Компания 1'),
-    ('company2', 'Компания 2'),
-    ('company3', 'Зеленые человечки'),
-]
 
-industry_choices = [
-        ('ux_designer', 'UX дизайнер'),
-        ('python_developer', 'Python-разработчик'),
-        ('project_manager', 'Project manager'),
-        ('frontend_developer', 'Frontend/Web разработчик'),
-        ('backend_developer', 'Backend разработчик'),
-    ]
-location_choices = [
-        ('office', 'Офис'),
-        ('remote', 'Удаленная работа'),
-        ('hybrid', 'Гибридный график'),
-    ]
-employment_choices = [
-        ('full_time', 'Полная занятость'),
-        ('internship', 'Стажировка'),
-        ('remote', 'Удаленная работа'),
-        ('part_time', 'Частичная занятость'),
-        ('temporary', 'Временная работа'),
-        ('freelance', 'Подработка'),
-    ]
-education_choices = [
-        ('higher', 'Высшее'),
-        ('secondary', 'Среднее'),
-        ('incomplete_higher', 'Неоконченное высшее'),
-    ]
+class Location(models.Model):
+    """Вид деятельности"""
+    name_location = models.CharField(
+        'Вид работы',
+        max_length=130,
+        unique=True,
+        error_messages={
+            'unique': 'такая деятельность уже есть',
+        },
+    )
+    slug = models.SlugField(
+        "Уникальный слаг вида образования",
+        max_length=100,
+        unique=True,
+        error_messages={
+            'unique': 'такой slug уже есть',
+        }
+    )
+
+    class Meta:
+        ordering = ('name_location',)
+        verbose_name = 'Вид деятельности'
+        verbose_name_plural = 'Виды деятельности'
+
+    def __str__(self):
+        return self.name_location
+
+
+class Education(models.Model):
+    """Модель образования"""
+    name_education = models.CharField(
+        'Образование',
+        max_length=130,
+        unique=True,
+        error_messages={
+            'unique': 'такой вид образования есть в бд',
+        },
+    )
+    slug = models.SlugField(
+        "Уникальный слаг вида образования",
+        max_length=100,
+        unique=True,
+        error_messages={
+            'unique': 'такой slug уже есть',
+        }
+    )
+
+    class Meta:
+        ordering = ('name_education',)
+        verbose_name = 'Образование'
+        verbose_name_plural = 'Образования'
+
+    def __str__(self):
+        return self.name_education
+
+
+class Employment(models.Model):
+    "Модель тега занятости"
+    name_employment = models.CharField(
+        max_length=100,
+        unique=True,
+        error_messages={
+            'unique': 'такой вид работы есть в бд',
+        },
+    )
+    slug = models.SlugField(
+        "Уникальный слаг вида работы",
+        max_length=100,
+        unique=True,
+        error_messages={
+            'unique': 'такой slug уже есть',
+        }
+    )
+
+    class Meta:
+        ordering = ('name_employment',)
+        verbose_name = 'Тег занятости'
+        verbose_name_plural = 'Теги занятости'
+
+    def __str__(self):
+        return self.name_employment
 
 
 class Company(models.Model):
     """Модель компании HRa"""
     name_company = models.CharField(
         max_length=200,
-        choices=choices_company,
     )
 
     class Meta:
@@ -92,7 +142,6 @@ class Vacancy(models.Model):
     name = models.CharField(
         'название вакансии',
         max_length=150,
-        choices=industry_choices
     )
     description = models.TextField(
         'описание вакансии',
@@ -104,20 +153,20 @@ class Vacancy(models.Model):
         Hardskils,
         verbose_name='Харды',
     )
-    education = models.CharField(
-        'Образование',
-        max_length=100,
-        choices=education_choices
+    education = models.ForeignKey(
+        Education,
+        verbose_name='Образование',
+        on_delete=models.CASCADE,
     )
-    location = models.CharField(
-        'Вид работы',
-        max_length=150,
-        choices=location_choices
+    location = models.ForeignKey(
+        Location,
+        verbose_name='Вид работы',
+        on_delete=models.CASCADE,
     )
-    employmentType = models.CharField(
-        'Вид занятости',
-        max_length=120,
-        choices=employment_choices
+    employmentType = models.ForeignKey(
+        Employment,
+        verbose_name='Тип работы',
+        on_delete=models.CASCADE,
     )
     phone = models.CharField(max_length=20)
     email = models.EmailField()
