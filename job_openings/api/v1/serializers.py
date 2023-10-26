@@ -20,18 +20,9 @@ class CompanySerializer(serializers.ModelSerializer):
 
 class VacansiSerializer(serializers.ModelSerializer):
     """Сереалайзер вакансии для гет запроса"""
-    name = serializers.CharField(source='get_name_display')
-    location = serializers.CharField(source='get_location_display')
-    employmentType = serializers.CharField(source='get_employmentType_display')
-    employer = serializers.SerializerMethodField()
-    specialty = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='name'
-    )
-
     class Meta:
         model = Vacancy
+        fields = '__all__'
         fields = (
             "dateIns",
             "name",
@@ -46,6 +37,3 @@ class VacansiSerializer(serializers.ModelSerializer):
             "employer",
             "specialty",
         )
-
-    def get_employer(self, obj):
-        return obj.employer.get_name_company_display()
