@@ -49,3 +49,4 @@ class VacansiSerializer(serializers.ModelSerializer):
 
     def get_employer(self, obj):
         return obj.employer.get_name_company_display()
+    
