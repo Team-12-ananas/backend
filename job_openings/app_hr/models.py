@@ -1,17 +1,43 @@
 from django.db import models
 
-from app_hr.validate import validate_username
+choices_company = [
+    ('company1', 'Компания 1'),
+    ('company2', 'Компания 2'),
+    ('company3', 'Зеленые человечки'),
+]
+
+industry_choices = [
+        ('ux_designer', 'UX дизайнер'),
+        ('python_developer', 'Python-разработчик'),
+        ('project_manager', 'Project manager'),
+        ('frontend_developer', 'Frontend/Web разработчик'),
+        ('backend_developer', 'Backend разработчик'),
+    ]
+location_choices = [
+        ('office', 'Офис'),
+        ('remote', 'Удаленная работа'),
+        ('hybrid', 'Гибридный график'),
+    ]
+employment_choices = [
+        ('full_time', 'Полная занятость'),
+        ('internship', 'Стажировка'),
+        ('remote', 'Удаленная работа'),
+        ('part_time', 'Частичная занятость'),
+        ('temporary', 'Временная работа'),
+        ('freelance', 'Подработка'),
+    ]
+education_choices = [
+        ('higher', 'Высшее'),
+        ('secondary', 'Среднее'),
+        ('incomplete_higher', 'Неоконченное высшее'),
+    ]
 
 
 class Company(models.Model):
     """Модель компании HRa"""
     name_company = models.CharField(
-        validators=(validate_username,),
-        max_length=120,
-        unique=True,
-        error_messages={
-            'unique': 'Такая компания существует',
-        },
+        max_length=200,
+        choices=choices_company,
     )
 
     class Meta:
@@ -63,6 +89,11 @@ class Vacancy(models.Model):
         related_name='company',
         verbose_name='Автор вакансии',
     )
+    name = models.CharField(
+        'название вакансии',
+        max_length=150,
+        choices=industry_choices
+    )
     description = models.TextField(
         'описание вакансии',
         help_text='напишите о вакансии'
@@ -75,11 +106,18 @@ class Vacancy(models.Model):
     )
     education = models.CharField(
         'Образование',
-        max_length=100
+        max_length=100,
+        choices=education_choices
+    )
+    location = models.CharField(
+        'Вид работы',
+        max_length=150,
+        choices=location_choices
     )
     employmentType = models.CharField(
         'Вид занятости',
-        max_length=120
+        max_length=120,
+        choices=employment_choices
     )
     phone = models.CharField(max_length=20)
     email = models.EmailField()
@@ -87,3 +125,11 @@ class Vacancy(models.Model):
         'Город',
         max_length=120,
     )
+
+    class Meta:
+        ordering = ('dateIns',)
+        verbose_name = "Вакансия"
+        verbose_name_plural = "Вакансии"
+
+    def __str__(self):
+        return self.name
