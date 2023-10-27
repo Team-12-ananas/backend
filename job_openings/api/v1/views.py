@@ -41,3 +41,16 @@ class CompanyViewSet(ReadOnlyModelViewSet):
     serializer_class = CompanySerializer
     permission_classes = (AllowAny,)
     pagination_class = None
+    http_method_names = ['get']
+
+    def retrieve(self, request, *args, **kwargs):
+        self.serializer_class = CompanySerializer
+        company_instance = self.get_object()
+        company_serializer = self.get_serializer(company_instance)
+        vacancies_queryset = Vacancy.objects.filter(employer=company_instance)
+        vacancies_serializer = VacansiSerializer(vacancies_queryset, many=True)
+        response_data = {
+            'company': company_serializer.data,
+            'vacancies': vacancies_serializer.data
+        }
+        return Response(response_data)
