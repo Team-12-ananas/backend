@@ -1,18 +1,18 @@
 from django.db import models
 
 
-class Location(models.Model):
-    """Вид деятельности"""
-    name_location = models.CharField(
-        'Вид работы',
+class Specialty(models.Model):
+    """Модель специальности"""
+    specialty = models.CharField(
+        'Образование',
         max_length=130,
         unique=True,
         error_messages={
-            'unique': 'такая деятельность уже есть',
+            'unique': 'такая специальность в бд',
         },
     )
     slug = models.SlugField(
-        "Уникальный слаг вида образования",
+        "Уникальный слаг типа занятостия",
         max_length=100,
         unique=True,
         error_messages={
@@ -21,12 +21,96 @@ class Location(models.Model):
     )
 
     class Meta:
-        ordering = ('name_location',)
-        verbose_name = 'Вид деятельности'
-        verbose_name_plural = 'Виды деятельности'
+        ordering = ('specialty',)
+        verbose_name = 'специальность'
+        verbose_name_plural = 'специальности'
 
     def __str__(self):
-        return self.name_location
+        return self.specialty
+
+
+class SpecializationType(models.Model):
+    """Модель специализации"""
+    specializationType = models.CharField(
+        'Образование',
+        max_length=130,
+        unique=True,
+        error_messages={
+            'unique': 'такая специализациия есть в бд',
+        },
+    )
+    slug = models.SlugField(
+        "Уникальный слаг типа занятостия",
+        max_length=100,
+        unique=True,
+        error_messages={
+            'unique': 'такой slug уже есть',
+        }
+    )
+
+    class Meta:
+        ordering = ('specializationType',)
+        verbose_name = 'специализация'
+        verbose_name_plural = 'специализации'
+
+    def __str__(self):
+        return self.specializationType
+
+
+class ProjectActivities(models.Model):
+    """Модель проетной активности"""
+    projectActivities = models.CharField(
+        'Образование',
+        max_length=130,
+        unique=True,
+        error_messages={
+            'unique': 'такая проетной активности есть в бд',
+        },
+    )
+    slug = models.SlugField(
+        "Уникальный слаг типа занятостия",
+        max_length=100,
+        unique=True,
+        error_messages={
+            'unique': 'такой slug уже есть',
+        }
+    )
+
+    class Meta:
+        ordering = ('projectActivities',)
+        verbose_name = 'проетной активность'
+        verbose_name_plural = 'проетной активности'
+
+    def __str__(self):
+        return self.projectActivities
+
+
+class JobExpiriense(models.Model):
+    """Модель типа занятости"""
+    jobexpiriense = models.CharField(
+        'Образование',
+        max_length=130,
+        unique=True,
+        error_messages={
+            'unique': 'такой типа занятости есть в бд',
+        },
+    )
+    slug = models.SlugField(
+        "Уникальный слаг типа занятостия",
+        max_length=100,
+        unique=True,
+        error_messages={
+            'unique': 'такой slug уже есть',
+        }
+    )
+
+    class Meta:
+        ordering = ('jobexpiriense',)
+        verbose_name = 'занятость'
+        verbose_name_plural = 'занятости'
+
+    def __str__(self):
+        return self.jobexpiriense
 
 
 class Education(models.Model):
@@ -120,8 +204,8 @@ class Hardskils(models.Model):
 
     class Meta:
         ordering = ('name',)
-        verbose_name = "Тег"
-        verbose_name_plural = "Теги"
+        verbose_name = "Хард скил"
+        verbose_name_plural = "Хард скилы"
 
     def __str__(self):
         return self.name
@@ -133,46 +217,61 @@ class Vacancy(models.Model):
         auto_now_add=True,
         verbose_name='Дата публикации'
         )
-    employer = models.ForeignKey(
+    author_vacancy = models.ForeignKey(
         Company,
         on_delete=models.CASCADE,
-        related_name='company',
+        related_name='vacancy',
         verbose_name='Автор вакансии',
     )
-    name = models.CharField(
-        'название вакансии',
-        max_length=150,
+    city = models.CharField(
+        'Город',
+        max_length=120,
     )
     description = models.TextField(
         'описание вакансии',
         help_text='напишите о вакансии'
         )
-    min_salary = models.DecimalField(max_digits=10, decimal_places=2)
-    max_salary = models.DecimalField(max_digits=10, decimal_places=2)
-    specialty = models.ManyToManyField(
-        Hardskils,
-        verbose_name='Харды',
-    )
     education = models.ForeignKey(
         Education,
         verbose_name='Образование',
         on_delete=models.CASCADE,
     )
-    location = models.ForeignKey(
-        Location,
-        verbose_name='Вид работы',
-        on_delete=models.CASCADE,
-    )
+    email = models.EmailField()
     employmentType = models.ForeignKey(
         Employment,
-        verbose_name='Тип работы',
+        verbose_name='Тип занятости',
         on_delete=models.CASCADE,
     )
+    jobexpiriense = models.ForeignKey(
+        JobExpiriense,
+        on_delete=models.CASCADE,
+        verbose_name='опыт работы',
+    )
+    keyskils = models.ManyToManyField(
+        Hardskils,
+        verbose_name='Харды',
+    )
+    min_salary = models.DecimalField(max_digits=10, decimal_places=2)
+    max_salary = models.DecimalField(max_digits=10, decimal_places=2)
+    name = models.CharField(
+        'название вакансии',
+        max_length=150,
+    )
     phone = models.CharField(max_length=20)
-    email = models.EmailField()
-    city = models.CharField(
-        'Город',
-        max_length=120,
+    projectActivities = models.ForeignKey(
+        ProjectActivities,
+        on_delete=models.CASCADE,
+        verbose_name='проектная активность',
+    )
+    specializationType = models.ForeignKey(
+        SpecializationType,
+        on_delete=models.CASCADE,
+        verbose_name='Тип специализации',
+        )
+    specialty = models.ForeignKey(
+        Specialty,
+        on_delete=models.CASCADE,
+        verbose_name='Cпециальность',
     )
 
     class Meta:
