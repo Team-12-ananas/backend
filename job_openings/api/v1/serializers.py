@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from app_hr.models import Education, Hardskils, JobExpiriense, ProjectActivities, SpecializationType, Specialty, Vacancy, Company, Employment
+from app_hr.models import Archive, Hardskils, Vacancy, Company
+from rest_framework.validators import UniqueTogetherValidator
 
 
 class HardskilsSerializer(serializers.ModelSerializer):
@@ -20,72 +21,43 @@ class CompanySerializer(serializers.ModelSerializer):
         )
 
 
-class EducationSerializer(serializers.ModelSerializer):
-    """Сериализатор образования."""
+class VacancySerializer(serializers.ModelSerializer):
+    """Сериализатор вакансии для гет запроса"""
+    author_vacancy = serializers.StringRelatedField()
+    education = serializers.StringRelatedField()
+    employmentType = serializers.StringRelatedField(many=True)
+    jobexpiriense = serializers.StringRelatedField()
+    projectActivities = serializers.StringRelatedField()
+    specializationType = serializers.StringRelatedField()
+    specialty = serializers.StringRelatedField()
+    keyskils = serializers.StringRelatedField(many=True)
+    active_vacancy = serializers.ReadOnlyField()
 
     class Meta:
-        model = Education
+        model = Vacancy
         fields = (
-            'name_education',
+            "dateIns",
+            "city",
+            "description",
+            "email",
+            "min_salary",
+            "max_salary",
+            "name",
+            "phone",
+            "author_vacancy",
+            "education",
+            "employmentType",
+            "jobexpiriense",
+            "projectActivities",
+            "specializationType",
+            "specialty",
+            "keyskils",
+            "active_vacancy",
         )
 
 
-class JobExperienceSerializer(serializers.ModelSerializer):
-    """Сериализатор опыта работы."""
-
-    class Meta:
-        model = JobExpiriense
-        fields = ('jobexpiriense',)
-
-
-class ProjectActivitiesSerializer(serializers.ModelSerializer):
-    """Сериализатор проектных активностей."""
-
-    class Meta:
-        model = ProjectActivities
-        fields = (
-            'projectActivities',
-        )
-
-
-class SpecializationTypeSerializer(serializers.ModelSerializer):
-    """Сериализатор типа специализации."""
-
-    class Meta:
-        model = SpecializationType
-        fields = (
-            'specializationType',
-        )
-
-
-class SpecialtySerializer(serializers.ModelSerializer):
-    """Сериализатор специальности."""
-
-    class Meta:
-        model = Specialty
-        fields = (
-            'specialty',
-        )
-
-
-class EmploymentTypeSerializer(serializers.ModelSerializer):
-    """Сериализатор типа занятости."""
-
-    class Meta:
-        model = Employment
-        fields = ('name_employment',)
-
-
-class VacansiSerializer(serializers.ModelSerializer):
-    """Сереалайзер вакансии для гет запроса"""
-    author_vacancy = CompanySerializer()
-    education = EducationSerializer()
-    employmentType = EmploymentTypeSerializer()
-    jobexpiriense = JobExperienceSerializer()
-    projectActivities = ProjectActivitiesSerializer()
-    specializationType = SpecializationTypeSerializer()
-    specialty = SpecialtySerializer()
-    keyskils = HardskilsSerializer(many=True)
+class VacancyCreateSerializer(serializers.ModelSerializer):
+    """Сериализатор для создания вакансии."""
 
     class Meta:
         model = Vacancy
@@ -107,3 +79,24 @@ class VacansiSerializer(serializers.ModelSerializer):
             "specialty",
             "keyskils",
         )
+
+
+class PostArhiveSerializer(serializers.ModelSerializer):
+    """Сереалайзер избранного"""
+
+    class Meta:
+        model = Archive
+        fields = ('name_company', 'vacancy')
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Archive.objects.all(),
+                fields=['name_company', 'vacancy'],
+                message='Вы уже добавили эту вакансию',
+            )
+        ]
+
+    def to_representation(self, instance):
+        request = self.context.get('request')
+        return VacancyCreateSerializer(
+            instance.recipe, context={'request': request}
+        ).data

@@ -8,7 +8,7 @@ router_v1 = DefaultRouter()
 
 router_v1.register('vacancy', VacancyViewSet, basename='vacancys')
 router_v1.register('company', CompanyViewSet, basename='companys')
-router_v1.register('tags', HardskilsViewSet, basename='tag')
+router_v1.register('hardskils', HardskilsViewSet, basename='tag')
 
 urlpatterns = [
     path('', include(router_v1.urls)),
