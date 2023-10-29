@@ -237,10 +237,9 @@ class Vacancy(models.Model):
         on_delete=models.CASCADE,
     )
     email = models.EmailField()
-    employmentType = models.ForeignKey(
+    employmentType = models.ManyToManyField(
         Employment,
         verbose_name='Тип занятости',
-        on_delete=models.CASCADE,
     )
     jobexpiriense = models.ForeignKey(
         JobExpiriense,
@@ -251,8 +250,8 @@ class Vacancy(models.Model):
         Hardskils,
         verbose_name='Харды',
     )
-    min_salary = models.DecimalField(max_digits=10, decimal_places=2)
-    max_salary = models.DecimalField(max_digits=10, decimal_places=2)
+    min_salary = models.IntegerField()
+    max_salary = models.IntegerField()
     name = models.CharField(
         'название вакансии',
         max_length=150,
@@ -273,6 +272,7 @@ class Vacancy(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Cпециальность',
     )
+    active_vacancy = models.BooleanField(default=True)
 
     class Meta:
         ordering = ('dateIns',)
@@ -281,3 +281,24 @@ class Vacancy(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Archive(models.Model):
+    """Модель архива"""
+    name_company = models.ForeignKey(
+        Company, on_delete=models.CASCADE, verbose_name='Компания'
+    )
+    vacancy = models.ForeignKey(
+        Vacancy, on_delete=models.CASCADE, verbose_name='Вакансия'
+    )
+
+    class Meta:
+        ordering = ('id',)
+        constraints = [
+            models.UniqueConstraint(
+                fields=['name_company', 'vacancy'], name='unique_arhive'
+            )
+        ]
+
+    def __str__(self):
+        return f'{self.name_company.name_company} - {self.vacancy.id}'
