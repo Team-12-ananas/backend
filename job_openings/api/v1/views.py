@@ -53,9 +53,9 @@ class VacancyViewSet(ModelViewSet):
         В выдачу добавляются рецепты.
         """
         return self.get_paginated_response(
-            SubscribedSerializer(
+            CompanySerializer(
                 self.paginate_queryset(
-                    User.objects.filter(subscribing__user=request.user)
+                    Company.objects.filter(subscribing__user=request.user)
                 ),
                 many=True,
                 context={'request': request},

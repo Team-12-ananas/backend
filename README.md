@@ -1,4 +1,3 @@
-
 ## Projectjob_openings
 
 Проект написан для реализации приложения по поиску работы.
@@ -75,6 +74,7 @@
     ]
 }
 ```
+
 ## 🛠 Инструменты
 <div align="center">
 	<code><img width="50" src="https://user-images.githubusercontent.com/25181517/192107858-fe19f043-c502-4009-8c47-476fc89718ad.png" alt="REST" title="REST"/></code>
