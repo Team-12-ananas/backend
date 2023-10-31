@@ -91,7 +91,7 @@ class PostArhiveSerializer(serializers.ModelSerializer):
             UniqueTogetherValidator(
                 queryset=Archive.objects.all(),
                 fields=['name_company', 'vacancy'],
-                message='Вы уже добавили эту вакансию',
+                message='Вы уже добавили эту вакансию в архив',
             )
         ]
 
