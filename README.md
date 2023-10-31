@@ -1,5 +1,5 @@
 
-## Todo projectjob_openings
+## Projectjob_openings
 
 Проект написан для реализации приложения по поиску работы.
 
